@@ -1,4 +1,4 @@
-# Multi Layer Perceptron
+# 1. Multi Layer Perceptron
 ---
 
 **AIM:**
@@ -67,7 +67,7 @@ Test Accuracy: 0.9738
 ---
 ---
 
-# Multiclass classification
+# 2. Multiclass classification
 ---
 
 ### **AIM:**  
@@ -133,4 +133,90 @@ Epoch 10/10
 Test Accuracy: 0.7967
 ```
 
+---
+---
+# 3. One-Hot Encoding
+---
+
+### **AIM:**  
+To implement One-Hot Encoding for words and characters in order to convert textual data into numerical representations suitable for machine learning models.
+
+---
+
+### **DESCRIPTION:**  
+One-Hot Encoding is a technique used to transform categorical data into binary vectors, where each category (word or character) is represented as a unique binary array.  
+- **Word-Level One-Hot Encoding:** Converts words into a sparse binary matrix, where each column represents a unique word in the vocabulary.  
+- **Character-Level One-Hot Encoding:** Converts individual characters into unique binary vectors.  
+- This method is commonly used in Natural Language Processing (NLP) tasks to prepare textual data for neural networks.
+
+---
+
+### **PROGRAM:**  
+
+#### **1. One-Hot Encoding for Words**
+```python
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+# Sample sentences
+texts = ["hello world", "machine learning is great", "hello deep learning"]
+
+# Initialize tokenizer
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(texts)
+
+# Convert words to one-hot encoded vectors
+one_hot_results = tokenizer.texts_to_matrix(texts, mode='binary')
+
+print("Word-Level One-Hot Encoding:")
+print(one_hot_results)
+```
+
+---
+
+#### **2. One-Hot Encoding for Characters**
+```python
+import numpy as np
+
+# Sample text
+text = "hello"
+
+# Define vocabulary
+vocab = sorted(set(text))  # Unique characters
+char_to_index = {char: idx for idx, char in enumerate(vocab)}
+
+# One-hot encoding for each character
+one_hot_encoded = np.eye(len(vocab))[list(map(char_to_index.get, text))]
+
+print("Character-Level One-Hot Encoding:")
+print(one_hot_encoded)
+```
+
+---
+
+### **OUTPUT:**  
+
+#### **Example Output for Word-Level Encoding**
+```
+Word-Level One-Hot Encoding:
+[[0. 1. 1. 0. 0. 0.]
+ [0. 0. 0. 1. 1. 1.]
+ [0. 1. 0. 1. 0. 1.]]
+```
+Each row represents a sentence, and each column a word in the vocabulary.
+
+---
+
+#### **Example Output for Character-Level Encoding**
+For `"hello"`, assuming the vocabulary consists of `{'e', 'h', 'l', 'o'}`, the output might look like:
+```
+Character-Level One-Hot Encoding:
+[[1. 0. 0. 0.]
+ [0. 1. 0. 0.]
+ [0. 0. 1. 0.]
+ [0. 0. 1. 0.]
+ [0. 0. 0. 1.]]
+```
+Each row corresponds to a character encoded into its respective one-hot vector.
+
+---
 ---
