@@ -1,4 +1,4 @@
-# Multilayer Perceptron
+# Multi Layer Perceptron
 ---
 
 **AIM:**
