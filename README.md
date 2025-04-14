@@ -165,7 +165,7 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(texts)
 
 # Convert words to one-hot encoded vectors
-one_hot_results = tokenizer.texts_to_matrix(texts, mode='binary')
+
 
 print("Word-Level One-Hot Encoding:")
 print(one_hot_results)
@@ -219,4 +219,137 @@ Character-Level One-Hot Encoding:
 Each row corresponds to a character encoded into its respective one-hot vector.
 
 ---
+---
+# 4. Convolutional Neural Network (CNN) 
+---
+### **AIM:**  
+To build a Convolutional Neural Network (CNN) for handwritten digit classification using the MNIST dataset and evaluate its performance.
+
+---
+
+### **DESCRIPTION:**  
+The MNIST dataset consists of 70,000 grayscale images of handwritten digits (0-9), each of size 28x28 pixels. Convolutional Neural Networks (CNNs) are a class of deep learning models designed specifically for image classification tasks. They use layers such as convolutional layers, pooling layers, and fully connected layers to automatically learn spatial hierarchies of features.  
+- **Convolutional Layers** extract important patterns using filters.
+- **Pooling Layers** reduce spatial dimensions to enhance computational efficiency.
+- **Fully Connected Layers** classify the image into one of ten digit categories.  
+In this experiment, we'll train a CNN model using TensorFlow/Keras and optimize it using the Adam optimizer with categorical cross-entropy loss.
+
+---
+
+### **PROGRAM:**  
+
+```python
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+
+# Load MNIST dataset
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Reshape data to fit CNN input (28x28x1)
+x_train = x_train.reshape(-1, 28, 28, 1) / 255.0  # Normalize pixel values
+x_test = x_test.reshape(-1, 28, 28, 1) / 255.0
+
+# Convert labels to one-hot encoding
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+# Build the CNN model
+model = Sequential([
+    Conv2D(32, kernel_size=(3,3), activation='relu', input_shape=(28,28,1)),
+    MaxPooling2D(pool_size=(2,2)),
+    Conv2D(64, kernel_size=(3,3), activation='relu'),
+    MaxPooling2D(pool_size=(2,2)),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dense(10, activation='softmax')
+])
+
+# Compile the model
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+# Train the model
+model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test))
+
+# Evaluate the model
+loss, accuracy = model.evaluate(x_test, y_test)
+print(f'Test Accuracy: {accuracy}')
+```
+
+---
+
+### **OUTPUT:**  
+After training for **10 epochs**, the CNN model achieves an accuracy of approximately **98-99%** on the MNIST dataset.
+
+_Example Output:_  
+```
+Epoch 10/10
+1875/1875 [==============================] - 15s - loss: 0.0284 - accuracy: 0.9914
+313/313 [==============================] - 2s - loss: 0.0389 - accuracy: 0.9878
+Test Accuracy: 0.9878
+```
+
+---
+This CNN model efficiently extracts features and performs digit classification with high accuracy. You can experiment by modifying **filter sizes**, **number of layers**, and **epochs** to improve performance further.
+---
+---
+# 5. VGG16
+### **AIM:**  
+To use a pre-trained Convolutional Neural Network (VGG16) for image classification and evaluate its performance on custom input images.
+
+---
+
+### **DESCRIPTION:**  
+VGG16 is a well-known deep learning model trained on the ImageNet dataset, capable of classifying images into 1,000 categories. Instead of training a model from scratch, we leverage this pre-trained model to perform image classification efficiently.  
+- The model consists of convolutional and fully connected layers that extract image features.
+- The model weights are pre-trained on millions of images, ensuring high accuracy for common objects.
+- We use TensorFlow/Keras to load the VGG16 model and classify images.
+
+---
+
+### **PROGRAM:**
+```python
+import tensorflow as tf
+from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input, decode_predictions
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import numpy as np
+
+# Load pre-trained VGG16 model (with ImageNet weights)
+model = VGG16(weights='imagenet')
+
+# Load and preprocess an image
+image_path = 'your_image.jpg'  # Replace with actual image path
+image = load_img(image_path, target_size=(224, 224))
+image_array = img_to_array(image)
+image_array = np.expand_dims(image_array, axis=0)
+image_array = preprocess_input(image_array)  # Normalize for VGG16
+
+# Perform prediction
+predictions = model.predict(image_array)
+decoded_predictions = decode_predictions(predictions, top=3)[0]  # Get top 3 predictions
+
+# Display results
+print("Predictions:")
+for i, (imagenet_id, label, score) in enumerate(decoded_predictions):
+    print(f"{i+1}. {label} ({score:.2f})")
+```
+
+---
+
+### **OUTPUT:**  
+After running the program, the model predicts the top 3 categories for the given image.
+
+_Example Output:_  
+```
+Predictions:
+1. Labrador retriever (0.85)
+2. Golden retriever (0.08)
+3. Flat-coated retriever (0.03)
+```
+This output indicates that the model classifies the image as a **Labrador retriever** with an 85% confidence.
+
 ---
