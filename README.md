@@ -165,7 +165,7 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(texts)
 
 # Convert words to one-hot encoded vectors
-
+one_hot_results = tokenizer.texts_to_matrix(texts, mode="binary")
 
 print("Word-Level One-Hot Encoding:")
 print(one_hot_results)
